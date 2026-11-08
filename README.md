@@ -17,6 +17,8 @@ tennis42 - the historic tennis for two game - pure javascript and simulation of 
 
 # Oscilloscope-asteroids
 
+forked from joemck/oscilloscope-asteroids
+
 Asteroids clone for oscilloscope
 ================================
 
