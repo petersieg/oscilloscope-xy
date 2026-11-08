@@ -1,4 +1,4 @@
-# oscilloscope-asteroids
+# several apps for oscilloscope xy mode display
 
 ### There is now a lot more for xy oscilloscope created by ChatGPT in javascript
 
@@ -10,8 +10,12 @@ lissajous - generate such figures
 
 lunar-lander - guess what ;-)
 
-tennis42 - the historic tennis for two game
+tennis42 - the historic tennis for two game - pure javascript and simulation of avr project
 
+3d-wireframe - show wireframe figures
+
+
+# oscilloscope-asteroids
 
 Asteroids clone for oscilloscope
 ================================
