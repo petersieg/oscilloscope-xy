@@ -1,4 +1,4 @@
-# several apps for oscilloscope xy mode display
+# Several apps for oscilloscope xy mode display
 
 ### There is now a lot more for xy oscilloscope created by ChatGPT in javascript
 
@@ -15,7 +15,7 @@ tennis42 - the historic tennis for two game - pure javascript and simulation of 
 3d-wireframe - show wireframe figures
 
 
-# oscilloscope-asteroids
+# Oscilloscope-asteroids
 
 Asteroids clone for oscilloscope
 ================================
