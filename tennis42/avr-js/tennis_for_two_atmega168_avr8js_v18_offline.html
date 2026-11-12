@@ -17,7 +17,7 @@ main{max-width:1050px;margin:auto;padding:22px 18px 40px}h1{font-size:clamp(24px
 <h1>Tennis for Two</h1><p class="sub">Originale ATmega168-Firmware · avr8js · einstellbare AVR-Zeitbasis</p>
 <section class="panel">
  <div class="top"><button id="start">Audio starten</button><button id="stop" class="secondary" disabled>Stop</button><button id="reset" class="secondary">AVR zurücksetzen</button><span class="status" id="status">Bereit · Firmware geladen</span></div>
- <div class="potrow" style="margin-top:12px"><label for="speed">Simulationsgeschwindigkeit</label><input id="speed" type="range" min="1" max="167" value="50"><output id="speedVal">50×</output></div>
+ <div class="potrow" style="margin-top:12px"><label for="speed">Simulationsgeschwindigkeit</label><input id="speed" type="range" min="1" max="167" value="20"><output id="speedVal">20×</output></div>
  <p class="note">Die Firmware läuft als AVR-Maschinencode. Für die Audioausgabe wird die AVR-Zeit auf die Audio-Samplerate gedehnt: ungefähr ein AVR-Taktzyklus pro Audiosample. So gehen die schnellen PORT-Wechsel nicht zwischen zwei Samples verloren. Das Spiel läuft dadurch langsamer als auf dem echten 8-MHz-Chip.</p>
 </section>
 <section class="panel">
