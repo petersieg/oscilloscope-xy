@@ -1,0 +1,259 @@
+# Projektzusammenfassung: 3D-Wireframe-Oszilloskop-Viewer XY
+
+## 1. Hauptziel des Projekts
+
+Entwicklung und schrittweise Erweiterung eines eigenständigen HTML-Programms namens `3d_wireframe_viewer_xy`.
+
+Das Programm stellt dreidimensionale Drahtgittermodelle dar und kann diese über eine XY-Audioausgabe auf einem Oszilloskop sichtbar machen.
+
+Die Modelle werden als Drahtgitter projiziert. Die Audiosignale steuern die horizontale und vertikale Ablenkung des Oszilloskops.
+
+Das Projekt soll möglichst unabhängig funktionieren:
+- Eine einzelne HTML-Datei
+- Keine externen Bibliotheken
+- Keine Netzwerkverbindungen erforderlich
+- Darstellung im Browser
+- XY-Audioausgabe über Web Audio
+
+Das Modellangebot wurde schrittweise erweitert. Der aktuelle Stand umfasst 18 Modelle.
+
+---
+
+## 2. Technische Grundfunktionen
+
+### Darstellung
+- Dreidimensionale Drahtgittermodelle
+- Perspektivische Projektion
+- Vorschau im HTML-Canvas
+- Auswahl und Wechsel zwischen den Modellen
+- Starten und Stoppen der Darstellung
+
+### Audioausgabe
+- Web Audio API mit 44,1 kHz
+- Stereoausgabe für den XY-Betrieb
+- Linker Audiokanal = Y-Achse
+- Rechter Audiokanal = X-Achse
+- Kontinuierliche Wiedergabe der Modellkonturen
+
+### Audiosteuerung
+Es gibt eine Funktion zur Drehung des XY-Audiosignals.
+
+Der Drehwinkel wechselt zyklisch:
+- 0°
+- 90°
+- 180°
+- 270°
+- anschließend wieder 0°
+
+Zusätzlich gibt es eine unabhängige Spiegelungsfunktion, welche die X-Achse invertiert.
+
+Wichtig: Drehung und Spiegelung wirken ausschließlich auf das Audiosignal. Die Browser-Vorschau und die 3D-Projektion bleiben unverändert.
+
+### Wiedergabegeschwindigkeit
+Auswahlmöglichkeiten:
+- 30 Sekunden
+- 24 Sekunden
+- 18 Sekunden
+- 12 Sekunden
+- 8 Sekunden
+
+Außerdem:
+- Zufällige Modellauswahl
+- Sequentielle Modellauswahl
+
+### Audio-Scheduler
+Bekannte technische Parameter:
+- 0,2 Sekunden pro Audio-Chunk
+- Vier Zyklen zu je 50 ms
+- 20 XY-Zyklen pro Sekunde
+- Scheduler-Intervall: 40 ms
+- Vorausplanung: 0,65 Sekunden
+
+---
+
+## 3. Bisherige Modelle
+
+Der Modellbestand wurde von ursprünglich 13 Modellen auf insgesamt 18 Modelle erweitert.
+
+Die Erweiterungen erfolgten in dieser Reihenfolge:
+
+| Modellnummer | Modell |
+|---|---|
+| 14 | Teekanne |
+| 15 | Bunny / Hase |
+| 16 | Büste |
+| 17 | Elektronikplatine |
+| 18 | Erdkugel |
+
+Die Teekanne, der Hase und die Büste sind vereinfachte, prozedural erzeugte Modelle.
+
+### Modell 17: Elektronikplatine
+
+Die Platine wurde als Drahtgittermodell ergänzt.
+
+Eigenschaften:
+- Rechteckige Leiterplatte
+- Vier ICs auf der Bestückungsseite
+- IC-Anschlusspins
+- Weitere elektronische Bauteile
+- Leiterbahnen auf der Rückseite
+- Kontaktpads
+- Durchkontaktierungen
+- Zwei räumlich getrennte Ebenen für Vorder- und Rückseite
+
+### Modell 18: Erdkugel
+
+Die Erdkugel wurde als weiteres Drahtgittermodell ergänzt.
+
+Eigenschaften:
+- Kugelförmiger 3D-Körper
+- Vereinfachte Kontinentumrisse
+- Längen- und Breitengrade wurden zunächst eingebaut.
+- Auf ausdrücklichen Wunsch wurden anschließend Längen- und Breitengrade entfernt.
+- Auch Äquator- und Polarkreise wurden entfernt.
+- Die Kontinentumrisse blieben erhalten.
+- Die Erde dreht sich über die vorhandene 3D-Animation kontinuierlich.
+
+Der zuletzt gewünschte zusätzliche äußere Umriss der Erdkugel wurde nicht mehr eingebaut.
+
+---
+
+## 4. Entscheidungen zur Erdkugel
+
+Die Wünsche zur Darstellung der Erde sind eindeutig:
+
+1. Keine Längengrade.
+2. Keine Breitengrade.
+3. Kein Äquator.
+4. Keine zusätzlichen Polarkreise.
+5. Kontinentumrisse bleiben erhalten.
+6. Die Kugel soll sich weiterhin drehen.
+7. Ein zusätzlicher äußerer Kugelumriss wurde zwar gewünscht, aber anschließend nicht mehr umgesetzt.
+8. Der aktuelle Stand soll unverändert bleiben.
+
+---
+
+## 5. Dateinamen und Versionsstand
+
+Die Modellnummer wird im Dateinamen mit `m` angegeben.
+
+Beispiel:
+- `m17` bedeutet 17 Modelle.
+- `m18` bedeutet 18 Modelle.
+
+Die wichtigsten Dateiversionen:
+
+| Version | Dateiname |
+|---|---|
+| Ursprüngliche Datei | `3d_wireframe_viewer_xy.html` |
+| Vor Platine | `3d_wireframe_viewer_xy_mit_teekanne_bunny_bueste.html` |
+| Mit Platine | `3d_wireframe_viewer_xy_mit_platine.html` |
+| Mit Erdkugel und Gradnetz | `3d_wireframe_viewer_xy_m18.html` |
+| Erdkugel ohne Gradnetz | `3d_wireframe_viewer_xy_m18_ohne_gradnetz.html` |
+
+### Aktuell vereinbarter Versionsname
+
+`3d_wireframe_viewer_xy_m18.html`
+
+Der Nutzer hat ausdrücklich entschieden, dass es bei der Bezeichnung `m18` bleiben soll.
+
+Es soll keine zusätzliche Versionsnummer oder Namensänderung vorgenommen werden.
+
+Die zuletzt bearbeitete Datei ohne Gradnetz wurde unter folgendem Namen bereitgestellt:
+
+`3d_wireframe_viewer_xy_m18_ohne_gradnetz.html`
+
+Die gewünschte Rückkehr zur einfachen Bezeichnung `3d_wireframe_viewer_xy_m18.html` wurde als Versionsentscheidung festgelegt. Eine erneute Umbenennung der Datei wurde nicht durchgeführt.
+
+---
+
+## 6. Wichtige Code- und Implementierungsdetails
+
+Die Modelle werden prozedural in JavaScript erzeugt.
+
+Für die Erdkugel wurde eine Funktion `createEarth()` ergänzt.
+
+Das Grundprinzip:
+- Kugeloberfläche anhand geografischer Koordinaten berechnen.
+- Kontinentumrisse als Polylinien auf der Kugeloberfläche darstellen.
+- Das Modell mit `m.finish()` abschließen.
+- Das fertige Modell in die vorhandene Modellliste aufnehmen.
+
+Die Kugelkoordinaten werden anhand von Längen- und Breitengrad in kartesische 3D-Koordinaten umgerechnet:
+
+```javascript
+function surface(lonDeg, latDeg, radius = R) {
+  const lon = lonDeg * Math.PI / 180;
+  const lat = latDeg * Math.PI / 180;
+
+  return [
+    radius * Math.cos(lat) * Math.sin(lon),
+    radius * Math.sin(lat),
+    radius * Math.cos(lat) * Math.cos(lon)
+  ];
+}
+```
+
+Die Kontinentumrisse werden als geografische Koordinatenlisten definiert und auf die Kugeloberfläche projiziert.
+
+Das Gradnetz wurde später aus der Funktion `createEarth()` entfernt. Die Kontinentumrisse blieben bestehen.
+
+Die Modellliste enthält insgesamt 18 Modelle.
+
+---
+
+## 7. Prüfungen
+
+Bei den letzten erfolgreichen Dateibearbeitungen wurde jeweils die JavaScript-Syntax mit `node --check` geprüft.
+
+Die Syntaxprüfung der Version mit Erdkugel ohne Gradnetz war erfolgreich.
+
+Wichtig:
+Eine vollständige Prüfung des Programms in einem realen Browser und mit angeschlossenem XY-Oszilloskop wurde nicht bestätigt.
+
+---
+
+## 8. Letzter Projektstand
+
+Der Nutzer hat zuletzt entschieden:
+
+**„Wie belassen es so als _m18“**
+
+Damit ist der Projektstand vorerst abgeschlossen.
+
+Keine weiteren Änderungen vornehmen, solange der Nutzer keine neuen Wünsche äußert.
+
+Insbesondere:
+- Keine Längen- und Breitengrade ergänzen.
+- Keine zusätzlichen Änderungen an der Erdkugel.
+- Keine neue Modellnummer vergeben.
+- Die Bezeichnung `m18` beibehalten.
+
+---
+
+## 9. Offene Punkte
+
+Es gibt derzeit keine ausdrücklich beauftragten offenen Entwicklungsarbeiten.
+
+Der zuletzt besprochene, aber nicht umgesetzte Wunsch war ein zusätzlicher äußerer Umriss der Erdkugel. Dieser wurde durch die abschließende Entscheidung, den Stand als `m18` zu belassen, nicht weiterverfolgt.
+
+Bei einer späteren Fortsetzung soll zunächst die aktuelle HTML-Datei als Ausgangsbasis verwendet werden.
+
+**Wichtig für einen neuen Chat:** Falls eine konkrete Änderung vorgenommen werden soll, muss die aktuelle HTML-Datei gegebenenfalls erneut hochgeladen werden. Die bloße Projektzusammenfassung enthält nicht den vollständigen HTML-Quellcode.
+
+---
+
+## 10. Arbeitsweise für die Fortsetzung
+
+Bei zukünftigen Erweiterungen bitte folgende Regeln beachten:
+
+1. Immer auf der zuletzt gültigen HTML-Datei aufbauen.
+2. Bestehende Funktionen nicht unbeabsichtigt verändern.
+3. Vorhandene Modelle und Audiofunktionen erhalten.
+4. Neue Modelle in die bestehende Modellliste integrieren.
+5. Modellnummer und Dateiname entsprechend der Modellanzahl aktualisieren, wenn der Nutzer dies wünscht.
+6. JavaScript-Syntax nach Änderungen prüfen.
+7. Die vollständige aktualisierte HTML-Datei bereitstellen.
+8. Keine unnötigen Änderungen an bereits abgeschlossenen Funktionen vornehmen.
+
+**Aktueller Projektstatus: 18 Modelle, Erdkugel ohne Gradnetz, Projekt vorerst abgeschlossen.**
