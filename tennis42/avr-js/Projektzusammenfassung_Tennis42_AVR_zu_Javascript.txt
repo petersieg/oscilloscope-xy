@@ -1,0 +1,388 @@
+# Projektzusammenfassung: Tennis for Two – AVR-Emulation und XY-Oszilloskop
+
+**Stand: 13. November 2026**
+
+## 1. Hauptziel des Projekts
+
+Ziel ist es, das historische Spiel **Tennis for Two** möglichst originalgetreu in einer eigenständigen HTML-Datei mit JavaScript nachzubilden.
+
+Dabei soll nicht einfach das Spiel grafisch simuliert werden. Stattdessen soll die originale AVR-Firmware auf einem emulierten ATmega168 ausgeführt werden.
+
+Die beiden 8-Bit-Ausgänge des AVR sollen die X- und Y-Signale für ein echtes analoges XY-Oszilloskop liefern. Die Darstellung soll möglichst genauso aussehen wie beim historischen Originalaufbau:
+
+- Eine gestochen scharfe horizontale Grundlinie.
+- Ein gestochen scharfes, senkrechtes Netz.
+- Ein Ball, der als heller, nahezu punktförmiger Lichtfleck erscheint.
+- Die Linien sollen unabhängig vom Spielverlauf stabil an ihren Positionen stehen.
+
+Das Projekt soll vollständig offline funktionieren. Die AVR-Emulation und die benötigten Bibliotheken müssen deshalb in der HTML-Datei enthalten sein.
+
+---
+
+## 2. Verwendete Originaldateien und technische Grundlage
+
+Folgende Originaldateien wurden bereitgestellt und untersucht:
+
+- `TennisCode.zip` – Originalquellcode.
+- `tennis.hex` – kompilierte Originalfirmware für den ATmega168.
+
+Die AVR-Emulation erfolgt mit **avr8js, Version 0.21.1**.
+
+Die Bibliothek wurde bereits in die HTML-Datei eingebettet. Ein externer Internetzugriff ist zur Laufzeit nicht erforderlich.
+
+Die bisherigen HTML-Versionen enthalten:
+- Den AVR8-Emulator.
+- Die originale Firmware als HEX-Daten.
+- Die JavaScript-Verarbeitung der Portausgaben.
+- Die Audioausgabe für die beiden Oszilloskopkanäle.
+- Die Spielsteuerung.
+
+Die Datei ist jeweils eine eigenständige HTML-Datei.
+
+---
+
+## 3. Funktionsweise der AVR-Ausgänge
+
+Der ATmega168 verwendet zwei 8-Bit-Ports als analoge XY-Signalquelle:
+
+| AVR-Port | Funktion | Oszilloskop |
+|---|---|---|
+| PORTB | X-Wert, 0–255 | Horizontal |
+| PORTD | Y-Wert, 0–255 | Vertikal |
+
+Die beiden digitalen Portwerte werden über R-2R-Widerstandsnetzwerke in analoge Spannungen umgesetzt.
+
+Bei einer angenommenen Referenzspannung von 5 V gilt:
+
+- Digitalwert 0 entspricht ungefähr 0 V.
+- Digitalwert 255 entspricht ungefähr 5 V.
+- Die Zwischenwerte ergeben entsprechend abgestufte Spannungen.
+
+Die Signale werden auf die beiden Kanäle eines XY-Oszilloskops gegeben.
+
+Bei normaler, nicht invertierter Darstellung gilt:
+- X = 0 liegt links.
+- X = 255 liegt rechts.
+- Y = 0 liegt unten.
+- Y = 255 liegt oben.
+
+Damit liegt der Punkt (0,0) links unten und (255,255) rechts oben.
+
+---
+
+## 4. Originalprogramm: Grundlinie, Netz und Ball
+
+Die Analyse des originalen C-Quellcodes hat folgende Portausgaben ergeben.
+
+### 4.1 Grundlinie
+
+Die Grundlinie wird durch eine Folge von Ausgaben erzeugt:
+
+- PORTD bleibt auf 0.
+- PORTB durchläuft Werte von 0 bis 126 und anschließend von 127 bis 254.
+
+Damit entsteht eine horizontale Linie am unteren Rand des XY-Bildschirms.
+
+Die Grundlinie ist unabhängig von der Ballposition und vom Spielverlauf.
+
+### 4.2 Netz
+
+Das Netz wird durch folgende Ausgabe erzeugt:
+
+- PORTB bleibt konstant auf 127.
+- PORTD steigt in Zweierschritten von 0 bis 60.
+- Anschließend fällt PORTD wieder in Zweierschritten auf 0.
+
+Das Netz liegt damit ungefähr in der horizontalen Bildschirmmitte und reicht vom unteren Rand bis zu einer Höhe von etwa 1,18 V bei 5 V Referenzspannung.
+
+Auch das Netz ist unabhängig vom Spielverlauf und der Ballposition.
+
+### 4.3 Ball
+
+Die Ballposition wird über die Variablen `xp` und `yp` ausgegeben:
+
+- PORTD erhält den Y-Wert `yp`.
+- PORTB erhält den X-Wert `xp`.
+
+Anschließend wird die Ballposition durch wiederholte Ausgabe der beiden Werte gehalten.
+
+Der Ball soll auf dem Oszilloskop als nahezu punktförmiger Lichtfleck erscheinen.
+
+### 4.4 Historische Referenz
+
+Es wurde ein Foto des originalen AVR-Aufbaus hochgeladen.
+
+Auf dem Foto sind zu erkennen:
+
+1. Eine sehr scharfe horizontale Grundlinie.
+2. Eine sehr scharfe senkrechte Netzlinie.
+3. Ein heller, nahezu punktförmiger Ball.
+
+Dieses Foto ist die visuelle Referenz für die weitere Entwicklung.
+
+---
+
+## 5. Bisherige Entwicklung der HTML-Versionen
+
+Die Versionen wurden schrittweise weiterentwickelt.
+
+### V12
+War noch keine echte AVR-Emulation. Das wurde korrigiert.
+
+### V13
+Erste Version mit AVR-Emulation und originaler Firmware.
+
+Probleme:
+- Grundlinie und Netz erschienen spiralförmig.
+- Die Winkelsteuerung sollte automatisch wiederholen.
+
+### V14
+Versuch, die Darstellung zu korrigieren. Die Oszilloskopdarstellung war weiterhin nicht zufriedenstellend.
+
+### V15
+Änderungen bei der Erfassung der Portausgaben. Das Bild wurde teilweise korrigiert, aber das Spiel fror ein.
+
+### V16
+Einführung einer einstellbaren Simulationsgeschwindigkeit. 50× funktionierte zunächst gut.
+
+### V17
+Die avr8js-Bibliothek wurde vollständig eingebettet. Damit wurde die HTML-Datei offline nutzbar.
+
+### V18
+Stabile Ausgangsversion mit:
+- Originalfirmware.
+- Eingebettetem AVR-Emulator.
+- Offline-Funktion.
+- Spielsteuerung.
+- Browserdarstellung.
+- Audioausgabe für das XY-Oszilloskop.
+
+V18 wurde als wichtigste Referenzversion festgelegt.
+
+### V19 bis V24
+Mehrere Versuche, die Portzugriffe und die XY-Punkterfassung zu verändern.
+
+Erkenntnisse:
+- Die Netzlinie wurde zeitweise dünner.
+- Die Grundlinie blieb teilweise unsichtbar.
+- Andere Änderungen machten das Netz wieder zu einem dicken Balken.
+- Die Browserdarstellung verschlechterte sich bei einigen Varianten.
+
+Entscheidung: Diese experimentellen Versionen werden nicht als Arbeitsgrundlage verwendet.
+
+### V25 – zeitlich erfasste Portausgaben
+Eine neue Testversion wurde auf Grundlage von V18 erstellt.
+
+Dateiname:
+
+`tennis_for_two_atmega168_avr8js_v25_timed_ports_offline.html`
+
+Änderung:
+- Jede Änderung an PORTB und PORTD wird mit dem AVR-Zykluszeitpunkt gespeichert.
+- Die Audioausgabe übernimmt Portänderungen erst, wenn der zugehörige AVR-Zeitpunkt erreicht ist.
+- Die Ereignisse werden in einem Ringpuffer zwischengespeichert.
+- Die Browserdarstellung wurde nicht verändert.
+
+V25 wurde erfolgreich gestartet und am Oszilloskop getestet.
+
+---
+
+## 6. Wichtigste neue Erkenntnis: Simulationsgeschwindigkeit
+
+Der Test von V25 hat einen sehr wichtigen Zusammenhang gezeigt.
+
+| Simulationsgeschwindigkeit | Beobachtung |
+|---|---|
+| 50× | Netz weiterhin ein dicker Balken |
+| 15× | Grundlinie und Netz erscheinen als dünne Linien |
+| 20× | Guter Kompromiss zwischen Linienqualität und Ballgeschwindigkeit |
+
+Damit ist erstmals ein reproduzierbarer Zusammenhang zwischen Simulationsgeschwindigkeit und Darstellungsqualität festgestellt worden.
+
+Die zeitliche Auflösung der Portausgabe beziehungsweise die Verarbeitung der Portänderungen scheint bei höherer Simulationsgeschwindigkeit eine wichtige Rolle zu spielen.
+
+Wichtig: Die genaue technische Ursache ist noch nicht abschließend geklärt.
+
+### Aktuelle Entscheidung
+
+Der Nutzer hat selbst die Standard-Simulationsgeschwindigkeit in V18 von 50× auf **20×** geändert.
+
+Das wurde als neuer Arbeitsstand festgelegt.
+
+Es wird keine neue Version allein wegen dieser Änderung benötigt.
+
+---
+
+## 7. Aktuelle maßgebliche Version
+
+**V18 mit 20× als Standardgeschwindigkeit ist die aktuelle Referenz- und Arbeitsversion.**
+
+Wichtige Entscheidungen:
+
+- V18 bleibt unangetastet, abgesehen von der vom Nutzer vorgenommenen Änderung der Standardgeschwindigkeit auf 20×.
+- V19 bis V24 werden nicht als Ausgangspunkt für weitere Arbeiten verwendet.
+- V25 bleibt eine separate experimentelle Testversion.
+- Die Browserdarstellung soll vorerst nicht verändert werden.
+- Zuerst muss die Oszilloskopdarstellung zuverlässig funktionieren.
+- Die Originalfirmware darf nicht durch eine nachprogrammierte Spielsimulation ersetzt werden.
+
+---
+
+## 8. Wichtige technische Überlegungen zur weiteren Entwicklung
+
+Die bisherige Untersuchung hat gezeigt, dass die zeitliche Reihenfolge der AVR-Portausgaben wichtig ist.
+
+Eine wesentliche Frage ist, wie die Portänderungen zwischen zwei Audio-Samples verarbeitet werden.
+
+Bei der bisherigen Ausgabe wurde teilweise nur der jeweils aktuelle X- und Y-Wert zum Zeitpunkt eines Audio-Samples verwendet.
+
+Dabei können mehrere Portänderungen innerhalb eines Audio-Samples liegen.
+
+V25 hat deshalb einen zeitgestempelten Ereignispuffer eingeführt.
+
+Der relevante Code ist sinngemäß:
+
+```javascript
+const eventCapacity = 65536;
+
+const eventCycle = new Float64Array(eventCapacity);
+const eventPort = new Uint8Array(eventCapacity);
+const eventValue = new Uint8Array(eventCapacity);
+
+let eventRead = 0;
+let eventWrite = 0;
+let eventCount = 0;
+
+function queuePortEvent(which, value) {
+    const n = eventWrite;
+
+    eventCycle[n] = cpu.cycles;
+    eventPort[n] = which === 'B' ? 0 : 1;
+    eventValue[n] = value & 255;
+
+    eventWrite = (n + 1) % eventCapacity;
+
+    if (eventCount < eventCapacity) {
+        eventCount++;
+    } else {
+        eventRead = (eventRead + 1) % eventCapacity;
+    }
+}
+```
+
+Die Audioausgabe verarbeitet die Ereignisse anschließend anhand ihres Zeitstempels:
+
+```javascript
+while (
+    eventCount > 0 &&
+    eventCycle[eventRead] <= cycleTarget
+) {
+    if (eventPort[eventRead] === 0) {
+        sampleX = eventValue[eventRead];
+    } else {
+        sampleY = eventValue[eventRead];
+    }
+
+    eventRead = (eventRead + 1) % eventCapacity;
+    eventCount--;
+}
+```
+
+Die eigentliche Ausgabe erfolgt mit:
+
+```javascript
+L[i] = ((sampleX / 255) * 2 - 1) * gain;
+R[i] = ((sampleY / 255) * 2 - 1) * gain;
+```
+
+Dieser Ansatz ist eine Grundlage für weitere Untersuchungen, aber noch keine endgültig bestätigte Lösung.
+
+---
+
+## 9. Offene Fragen und nächste Schritte
+
+### Priorität 1: Oszilloskopdarstellung weiter untersuchen
+
+Die Darstellung soll dem historischen Original möglichst nahekommen.
+
+Insbesondere:
+- Grundlinie als scharfe, stabile horizontale Linie.
+- Netz als scharfe, stabile senkrechte Linie.
+- Ball als einzelner heller Punkt.
+- Keine dicken Balken.
+- Keine Spiralen.
+- Keine unerwünschten Verbindungslinien.
+
+### Priorität 2: Ursache der Geschwindigkeitsabhängigkeit verstehen
+
+Es muss untersucht werden, warum bei 15× und 20× eine bessere Darstellung entsteht als bei 50×.
+
+Mögliche Untersuchungsbereiche:
+- AVR-Zykluszeitpunkte.
+- Audio-Sample-Rate.
+- Verarbeitung mehrerer Portänderungen innerhalb eines Audio-Samples.
+- Sample-and-Hold-Verhalten.
+- Ringpuffer und Ereignisverluste.
+- Tatsächliche zeitliche Abfolge der beiden Portausgänge.
+
+Nicht einfach weitere Änderungen auf Verdacht vornehmen.
+
+### Priorität 3: Ballgeschwindigkeit
+
+20× ist derzeit der bevorzugte Kompromiss.
+
+Die Ballbewegung soll möglichst flüssig und originalgetreu sein, ohne die Linienqualität zu verschlechtern.
+
+### Priorität 4: Browserdarstellung
+
+Die Browserdarstellung soll vorerst unverändert bleiben.
+
+Erst wenn die Oszilloskopdarstellung zuverlässig funktioniert, soll über Verbesserungen an der Browserdarstellung nachgedacht werden.
+
+---
+
+## 10. Arbeitsweise für die weitere Zusammenarbeit
+
+Bitte folgende Regeln beachten:
+
+1. Immer von V18 mit 20× Standardgeschwindigkeit ausgehen.
+2. Vor jeder Änderung eine Kopie anlegen.
+3. V18 niemals durch eine experimentelle Version überschreiben.
+4. Pro Test möglichst nur eine technische Änderung vornehmen.
+5. Keine unbegründeten Behauptungen, dass ein Problem gelöst sei.
+6. Jede Änderung zunächst technisch prüfen und anschließend vom Nutzer am realen Oszilloskop testen lassen.
+7. Die Originalfirmware und ihre Portausgaben als maßgebliche Referenz verwenden.
+8. Die Browserdarstellung zunächst in Ruhe lassen.
+9. Bei unklaren Ergebnissen lieber Messwerte und Portzugriffe untersuchen, statt weitere Vermutungen in Code umzusetzen.
+
+---
+
+## 11. Dateien und Dateinamen
+
+Bekannte Dateien:
+
+- `TennisCode.zip` – Originalquellcode.
+- `tennis.hex` – Originalfirmware.
+- `tennis_for_two_atmega168_avr8js_v18_offline.html` – ursprüngliche Referenzversion.
+- V18 mit 20× – vom Nutzer angepasste aktuelle Arbeitsversion.
+- `tennis_for_two_atmega168_avr8js_v25_timed_ports_offline.html` – experimentelle Version mit zeitgestempelten Portänderungen.
+
+Die früheren Versionen V19 bis V24 sind für die weitere Arbeit nicht maßgeblich.
+
+---
+
+## 12. Zusammenfassung für den Neustart
+
+Wir entwickeln eine möglichst originalgetreue Offline-Emulation von Tennis for Two mit der originalen ATmega168-Firmware und avr8js.
+
+PORTB liefert X, PORTD liefert Y. Die Originalfirmware erzeugt eine horizontale Grundlinie bei Y=0, ein senkrechtes Netz bei X=127 und den beweglichen Ball über die Variablen xp und yp.
+
+Das historische Originalfoto zeigt gestochen scharfe Linien und einen nahezu punktförmigen Ball.
+
+Nach mehreren erfolglosen Versuchen hat V25 einen wichtigen Hinweis geliefert: Bei 15× sind Grundlinie und Netz dünn, bei 50× ist das Netz wieder ein Balken. 20× ist ein guter Kompromiss.
+
+**Die aktuelle Arbeitsgrundlage ist V18 mit 20× als Standardgeschwindigkeit.**
+
+Als nächstes soll die zeitliche Verarbeitung der AVR-Portänderungen weiter untersucht werden. Dabei muss die Oszilloskopdarstellung verbessert werden, ohne die funktionierende Browserdarstellung oder die Originalfirmware zu verändern.
+
+Bitte zunächst den vorhandenen Stand verstehen und keine neue Version erstellen, bevor die nächsten konkreten Änderungen gemeinsam festgelegt wurden.
